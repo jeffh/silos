@@ -1,0 +1,6 @@
+#!/bin/sh
+export GIT_WORK_TREE=$HOME/test/
+export GIT_DIR=%(REPO)s
+mkdir -p $GIT_WORK_TREE; true
+git checkout -f
+echo "Checking out code to $GIT_WORK_TREE"
