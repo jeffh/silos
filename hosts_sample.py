@@ -1,4 +1,4 @@
-from fabric.api import env task
+from fabric.api import env, task
 
 @task
 def pi(): env.hosts += ['pi@pi']

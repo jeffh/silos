@@ -6,7 +6,11 @@ from fabric.state import output
 from cuisine import *
 
 from crontab import Crontab
-from hosts import *
+
+try:
+    from hosts import *
+except ImportError:
+    pass
 
 output['everything'] = False
 output['user'] = True
@@ -30,7 +34,7 @@ def reboot_if_required():
         puts("No reboot required.")
 
 @task
-def ssh_key(keypath=None, user=None):
+def add_key(keypath=None, user=None):
     """Adds the local ssh key to the authorized_keys list for the given user.
 
     Defaults to ~/.ssh/id_rsa.pub and current user being ssh-ed in.
@@ -54,12 +58,8 @@ def add_cron_ping(url, freq='@hourly', template='curl -k %r'):
 
 @task
 @parallel
-def bootstrap(upgrade=0):
-    """Basic set up of the system:
-        - Adds default ssh-key
-        - Upgrades packages
-    """
-    ssh_key()
+def bootstrap(upgrade=1, pkgs='vim'):
+    """Basic set up of the system"""
     if int(upgrade):
         puts("Updating Sources...")
         package_update()
@@ -71,10 +71,13 @@ def bootstrap(upgrade=0):
     file_write('/etc/apt/apt.conf.d/20auto-upgrades', """APT::Periodic::Update-Package-Lists "1";
 APT::Periodic::Unattended-Upgrade "1";""", sudo=True)
 
-    ensure('vim')
+    for pkg in pkgs.split(' '):
+        ensure(pkg)
 
 @task
 def setup_python():
+    "Installs python, pip, and virtualenv"
+    ensure('python')
     ensure('python-pip')
     pip_ensure('virtualenv', use_sudo=True)
 
