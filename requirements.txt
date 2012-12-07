@@ -1,0 +1,6 @@
+Fabric==1.5.1
+cuisine==0.4.4
+distribute==0.6.27
+paramiko==1.9.0
+pycrypto==2.6
+wsgiref==0.1.2
